@@ -12,6 +12,16 @@ if TYPE_CHECKING:
 
 T = TypeVar("T", bound="Entity")
 
+from enum import auto, Enum
+class Facing(Enum):
+    NW = auto()
+    N = auto()
+    NE = auto()
+    E = auto()
+    SE = auto()
+    S = auto()
+    SW = auto()
+    W = auto()
 
 class Entity:
     """
@@ -25,6 +35,7 @@ class Entity:
         gamemap: Optional[GameMap] = None,
         x: int = 0,
         y: int = 0,
+        facing: Facing = Facing.N,
         char: str = "?",
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
@@ -33,6 +44,7 @@ class Entity:
     ):
         self.x = x
         self.y = y
+        self.facing = facing
         self.char = char
         self.color = color
         self.name = name
@@ -78,7 +90,7 @@ class Actor(Entity):
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
         ai_cls: Type[BaseAI],
-        fighter: Fighter
+        fighter: Fighter,
     ):
         super().__init__(
             x=x,
@@ -95,6 +107,7 @@ class Actor(Entity):
         self.fighter = fighter
         self.fighter.entity = self
 
+    # this is an odd way to do this. probably fine, but this was the side-effecting problem with setting AI to null.
     @property
     def is_alive(self) -> bool:
         """Returns True as long as this actor can perform actions."""
