@@ -18,9 +18,11 @@ def main() -> None:
 
     room_max_size = 40
     room_min_size = 12
-    max_rooms = 2
+    max_rooms = 3
 
     max_monsters_per_room = 1
+    max_monsters = 1
+    min_monsters = 1
 
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
@@ -37,8 +39,13 @@ def main() -> None:
         map_width=map_width,
         map_height=map_height,
         max_monsters_per_room=max_monsters_per_room,
+        max_monsters = max_monsters,
+        min_monsters = min_monsters,
         engine=engine,
     )
+
+    print(len(list(engine.game_map.hostile_actors)))
+
     engine.update_fov()
 
     engine.message_log.add_message(
@@ -49,7 +56,7 @@ def main() -> None:
         screen_width,
         screen_height,
         tileset=tileset,
-        title="Yet Another Roguelike Tutorial",
+        title="sneak",
         vsync=True,
     ) as context:
         root_console = tcod.Console(screen_width, screen_height, order="F")

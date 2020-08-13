@@ -6,6 +6,8 @@ import numpy as np  # type: ignore
 from tcod.console import Console
 
 from entity import Actor
+from components.ai import HostileEnemy
+
 import tile_types
 
 if TYPE_CHECKING:
@@ -36,6 +38,15 @@ class GameMap:
             entity
             for entity in self.entities
             if isinstance(entity, Actor) and entity.is_alive
+        )
+
+    @property
+    def hostile_actors(self) -> Iterator[Actor]:
+        """Iterate over hostile actors."""
+        yield from (
+        entity
+        for entity in self.entities
+        if isinstance(entity.ai, HostileEnemy) and entity.is_alive
         )
 
     def get_blocking_entity_at_location(

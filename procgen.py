@@ -42,11 +42,16 @@ class RectangularRoom:
             and self.y2 >= other.y1
         )
 
-
+# this assumes room generate is stateless. that's going to be wrong for me.
+# eventually room generation needs at least two passes. One to do layout,
 def place_entities(
-    room: RectangularRoom, dungeon: GameMap, maximum_monsters: int,
+    room: RectangularRoom, dungeon: GameMap, maximum_monsters: int, minimum_monsters: int
 ) -> None:
-    number_of_monsters = random.randint(0, maximum_monsters)
+
+    # uh, I'd like to do an assert here that max >= min but idk how
+    # to do that anymore.
+
+    number_of_monsters = random.randint(minimum_monsters, maximum_monsters)
 
     for i in range(number_of_monsters):
         x = random.randint(room.x1 + 1, room.x2 - 1)
@@ -86,6 +91,8 @@ def generate_dungeon(
     map_width: int,
     map_height: int,
     max_monsters_per_room: int,
+    max_monsters: int,
+    min_monsters: int,
     engine: Engine,
 ) -> GameMap:
     """Generate a new dungeon map."""
@@ -120,7 +127,8 @@ def generate_dungeon(
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
 
-        place_entities(new_room, dungeon, max_monsters_per_room)
+        # actually, mess with max_monsters to make this function do what we want.
+        place_entities(new_room, dungeon, max_monsters_per_room, 0)
 
         # Finally, append the new room to the list.
         rooms.append(new_room)
