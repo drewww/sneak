@@ -21,6 +21,9 @@ class RectangularRoom:
         self.x2 = x + width
         self.y2 = y + height
 
+    def __str__(self):
+        return f'room:(({self.x1},{self.y1}), ({self.x2}, {self.y2}))'
+
     @property
     def center(self) -> Tuple[int, int]:
         center_x = int((self.x1 + self.x2) / 2)
@@ -50,13 +53,15 @@ def place_entities(
 
     # uh, I'd like to do an assert here that max >= min but idk how
     # to do that anymore.
-    if miminum_monsters > maximum_monsters:
+    if minimum_monsters > maximum_monsters:
         minimum_monsters = maximum_monsters
 
     if maximum_monsters == 0:
         return
 
     number_of_monsters = random.randint(minimum_monsters, maximum_monsters)
+
+    print(f'Adding {number_of_monsters} to {room}')
 
     for i in range(number_of_monsters):
         x = random.randint(room.x1 + 1, room.x2 - 1)
@@ -117,8 +122,11 @@ def generate_dungeon(
         # "RectangularRoom" class makes rectangles easier to work with
         new_room = RectangularRoom(x, y, room_width, room_height)
 
+        print(f'room attempt: {new_room}')
+
         # Run through the other rooms and see if they intersect with this one.
         if any(new_room.intersects(other_room) for other_room in rooms):
+            print(f'intersected, continue')
             continue  # This room intersects, so go to the next attempt.
         # If there are no intersections then the room is valid.
 
@@ -139,10 +147,10 @@ def generate_dungeon(
 
     # after making rooms, then do a pass placing entities.
     for room in rooms:
+        print(f'populating rooms: {room}')
         # actually, mess with max_monsters to make this function do what we want.
         # if total monsters is less than max monsters, consider adding a monster.
         if dungeon.num_hostiles < max_monsters:
-
             # if we're also below the minimum, we _must_ add a monster.
             if dungeon.num_hostiles < min_monsters:
                 place_entities(room, dungeon, max_monsters_per_room, 1)

@@ -18,11 +18,11 @@ def main() -> None:
 
     room_max_size = 40
     room_min_size = 12
-    max_rooms = 3
+    max_rooms = 5
 
     max_monsters_per_room = 1
-    max_monsters = 1
-    min_monsters = 1
+    max_monsters = 5
+    min_monsters = 2
 
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
@@ -44,7 +44,9 @@ def main() -> None:
         engine=engine,
     )
 
-    print(len(list(engine.game_map.hostile_actors)))
+    print(list(engine.game_map.actors)[0].ai)
+
+    print(f'hostile count: {engine.game_map.num_hostiles}')
 
     engine.update_fov()
 
