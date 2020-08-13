@@ -146,8 +146,15 @@ def generate_dungeon(
 
 
     # after making rooms, then do a pass placing entities.
+    skip_first = True
     for room in rooms:
         print(f'populating rooms: {room}')
+
+        # player always goes in first room. 
+        if skip_first:
+            skip_first = False
+            continue
+
         # actually, mess with max_monsters to make this function do what we want.
         # if total monsters is less than max monsters, consider adding a monster.
         if dungeon.num_hostiles < max_monsters:
