@@ -16,11 +16,11 @@ def main() -> None:
     map_width = 80
     map_height = 43
 
-    room_max_size = 10
-    room_min_size = 6
-    max_rooms = 30
+    room_max_size = 40
+    room_min_size = 12
+    max_rooms = 2
 
-    max_monsters_per_room = 2
+    max_monsters_per_room = 1
 
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
@@ -42,7 +42,7 @@ def main() -> None:
     engine.update_fov()
 
     engine.message_log.add_message(
-        "Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text
+        "Time to sneak!", color.welcome_text
     )
 
     with tcod.context.new_terminal(
