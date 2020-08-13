@@ -50,6 +50,11 @@ def place_entities(
 
     # uh, I'd like to do an assert here that max >= min but idk how
     # to do that anymore.
+    if miminum_monsters > maximum_monsters:
+        minimum_monsters = maximum_monsters
+
+    if maximum_monsters == 0:
+        return
 
     number_of_monsters = random.randint(minimum_monsters, maximum_monsters)
 
@@ -101,6 +106,7 @@ def generate_dungeon(
 
     rooms: List[RectangularRoom] = []
 
+    # this is busted with the big room sizes, rooms can pretty easily end up inside other rooms. that's okay for now.
     for r in range(max_rooms):
         room_width = random.randint(room_min_size, room_max_size)
         room_height = random.randint(room_min_size, room_max_size)
@@ -127,10 +133,23 @@ def generate_dungeon(
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
 
-        # actually, mess with max_monsters to make this function do what we want.
-        place_entities(new_room, dungeon, max_monsters_per_room, 0)
-
         # Finally, append the new room to the list.
         rooms.append(new_room)
 
+
+    # after making rooms, then do a pass placing entities.
+    for room in rooms:
+        # actually, mess with max_monsters to make this function do what we want.
+        # if total monsters is less than max monsters, consider adding a monster.
+        if dungeon.num_hostiles < max_monsters:
+
+            # if we're also below the minimum, we _must_ add a monster.
+            if dungeon.num_hostiles < min_monsters:
+                place_entities(room, dungeon, max_monsters_per_room, 1)
+            else:
+                # otherwise, we're not required to, but we should try.
+                place_entities(room, dungeon, max_monsters_per_room, 0)
+
+        # the net effect of this is that the first N rooms will get a monster until we hit the minimum. then it's random.
+        # this isn't actually right but it's close enough for now.
     return dungeon

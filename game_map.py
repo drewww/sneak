@@ -45,9 +45,13 @@ class GameMap:
         """Iterate over hostile actors."""
         yield from (
         entity
-        for entity in self.entities
+        for entity in self.actors
         if isinstance(entity.ai, HostileEnemy) and entity.is_alive
         )
+
+    @property
+    def num_hostiles(self) -> int:
+        return len(list(self.hostile_actors))
 
     def get_blocking_entity_at_location(
         self, location_x: int, location_y: int,
