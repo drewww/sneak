@@ -23,6 +23,15 @@ class Facing(Enum):
     SW = auto()
     W = auto()
 
+    @classmethod
+    def get_pos(cls, f: Facing):
+        map = {Facing.NW: (-1, -1), Facing.N: (0, -1), Facing.NE: (1, -1), Facing.E: (1, 0), Facing.SE: (1, 1), Facing.S: (0, 1), Facing.SW: (-1,1), Facing.W: (-1, 0)}
+
+        print(f'facing: {f} = {map[f]}')
+
+        return map[f]
+
+
 class Entity:
     """
     A generic object to represent players, enemies, items, etc.

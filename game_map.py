@@ -5,7 +5,7 @@ from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 import numpy as np  # type: ignore
 from tcod.console import Console
 
-from entity import Actor
+from entity import Actor, Facing
 import tile_types
 
 if TYPE_CHECKING:
@@ -85,3 +85,9 @@ class GameMap:
                 console.print(
                     x=entity.x, y=entity.y, string=entity.char, fg=entity.color
                 )
+
+                # now print their facing
+                # not sure where to do this but need to map facing to dx/dy.
+                (fx, fy) = Facing.get_pos(entity.facing)
+
+                console.print(x=entity.x+fx, y=entity.y+fy, string='f', fg=entity.color)
