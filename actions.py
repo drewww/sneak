@@ -4,6 +4,9 @@ from typing import Optional, Tuple, TYPE_CHECKING
 
 import color
 
+import math
+from entity import Facing
+
 if TYPE_CHECKING:
     from engine import Engine
     from entity import Actor, Entity
@@ -64,11 +67,42 @@ class ActionWithDirection(Action):
         return self.engine.game_map.get_actor_at_location(*self.dest_xy)
 
     def perform(self) -> None:
-        raise NotImplementedError()
+        # for any action with a direction, set the facing to the direction.
+        self.entity.facing = self.get_direction()
+
+    def get_direction(self):
+        # this angle is in radians
+        # 0 = up, 1=right
+        angle = math.atan2(self.dy, self.dx)
+
+        # i want to map this down to 0/1/-1 on two axes.
+        # or maybe I'm just weak and do the map version.
+        # these = are a little shaky and I'm not sure they're mutually exclusive
+        if angle <= math.pi/8 and angle > -math.pi/8:
+            return Facing.E
+        elif angle <= 3*math.pi/8 and angle > math.pi/8:
+            return Facing.SE
+        elif angle <= 5*math.pi/8 and angle > 3*math.pi/8:
+            return Facing.S
+        elif angle <= 7*math.pi/8 and angle > 5*math.pi/8:
+            return Facing.SW
+        elif angle >= 7*math.pi/8 or angle < -7*math.pi/8:
+            return Facing.W
+        elif angle >= -3*math.pi/8 and angle < -math.pi/8:
+            return Facing.NE
+        elif angle >= -5*math.pi/8 and angle < -3*math.pi/8:
+            return Facing.N
+        elif angle >= -7*math.pi/8 and angle < -5*math.pi/8:
+            return Facing.NW
+
+
+
 
 
 class MeleeAction(ActionWithDirection):
     def perform(self) -> None:
+        super().perform()
+
         target = self.target_actor
         if not target:
             return  # No entity to attack.
@@ -94,6 +128,8 @@ class MeleeAction(ActionWithDirection):
 
 class MovementAction(ActionWithDirection):
     def perform(self) -> None:
+        super().perform()
+
         dest_x, dest_y = self.dest_xy
 
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
@@ -108,6 +144,8 @@ class MovementAction(ActionWithDirection):
 
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
+        super().perform()
+
         if self.target_actor:
             return MeleeAction(self.entity, self.dx, self.dy).perform()
 
