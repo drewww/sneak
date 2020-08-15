@@ -90,4 +90,4 @@ class GameMap:
                 # not sure where to do this but need to map facing to dx/dy.
                 (fx, fy) = Facing.get_pos(entity.facing)
 
-                console.print(x=entity.x+fx, y=entity.y+fy, string='f', fg=entity.color)
+                console.print(x=entity.x+fx, y=entity.y+fy, string='*', fg=entity.color)
