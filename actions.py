@@ -72,9 +72,6 @@ class ActionWithDirection(Action):
         # self.entity.facing = Facing.get_direction(self.dx, self.dy)
         pass
 
-
-
-
 class MeleeAction(ActionWithDirection):
     def perform(self) -> None:
         super().perform()
@@ -138,6 +135,16 @@ class RotateAction(Action):
     def perform(self) -> None:
         print(f'updating {self.entity} facing to {self.facing}')
         self.entity.facing = self.facing
+
+class TargetLockAction(Action):
+    def __init__(self, entity: Actor, facing: Facing, target: Actor):
+        super().__init__(entity)
+        self.facing = facing
+        self.target = target
+
+    def perform(self) -> None:
+        self.entity.facing = self.facing
+        self.entity.target_lock = self.target
 
 
 class BumpAction(ActionWithDirection):

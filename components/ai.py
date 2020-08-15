@@ -5,10 +5,11 @@ from typing import List, Tuple, TYPE_CHECKING
 import numpy as np  # type: ignore
 import tcod
 
-from actions import Action, MeleeAction, MovementAction, WaitAction, RotateAction, ShootAction
+from actions import Action, MeleeAction, MovementAction, WaitAction, RotateAction, ShootAction, TargetLockAction
 from components.base_component import BaseComponent
 
 from entity import Facing
+import color
 
 if TYPE_CHECKING:
     from entity import Actor
@@ -78,29 +79,52 @@ class HostileEnemy(BaseAI):
         target_is_visible = visibility[target.x, target.y]
         print(f'{self} -> ({target.x}, {target.y}) = {target_is_visible}')
 
-        if target_is_visible:
-            if distance <= 1:
-                print(f'too close to attack!')
-                # return MeleeAction(self.entity, dx, dy).perform()
-            elif distance > 1 and distance <= 3:
-                # oh actually, this is easy! get angle,
-                # check if it collapses to facing. done.
-                firing_direction = Facing.get_direction(self.entity.x, self.entity.y, target.x, target.y)
-                print(f'firing_facing: {firing_direction} + my_facing: {self.entity.facing}')
 
-                if(firing_direction == self.entity.facing):
+        # reasons to drop a lock:
+        #   moving
+        #   target is out of sight
+        #   target is out of range
+
+        if target_is_visible:
+            firing_direction = Facing.get_direction(self.entity.x,
+                self.entity.y, target.x, target.y)
+
+            if distance <= 1:
+                print(f'too close, dropping lock!')
+                self.entity.target_lock = None
+                self.engine.message_log.add_message(
+                    f"You got in close, enemy lost their lock!", color.white
+                )
+            elif distance > 1 and distance <= 5:
+
+                # target lock now implies facing. if you move across a facing
+                # boundary it doesn't unlock.
+                if self.entity.target_lock==target:
                     return ShootAction(self.entity, target.x-self.entity.x,
                         target.y - self.entity.y).perform()
                 else:
                     # lets just assume we fully rotate to target immediately.
-                    print('not facing target, prepare to rotate')
-                    return RotateAction(self.entity, firing_direction).perform()
+                    self.engine.message_log.add_message(
+                        f"You've been locked on to!.", color.enemy_atk
+                    )
+
+                    return TargetLockAction(self.entity, firing_direction, target).perform()
+
             else:
                 # if they are visible but not in range, move to them.
+                # lock is held in this case because they can see you they just know they can't hit you yet.
                 self.path = self.get_path_to(target.x, target.y)
         else:
             # TODO this is obviously wrong now because enemies will ALWAYS heat seak to the player. but okay for now to test turn + move logic.
             self.path = self.get_path_to(target.x, target.y)
+
+            # also, if target not visible, drop the lock.
+            if self.entity.target_lock != None:
+                self.engine.message_log.add_message(
+                    f"The enemy lost sight of you.", color.white
+                )
+
+            self.entity.target_lock = None
 
         if self.path:
             dest_x, dest_y = self.path.pop(0)
@@ -114,7 +138,5 @@ class HostileEnemy(BaseAI):
                 ).perform()
             else:
                 return RotateAction(self.entity, moving_direction).perform()
-
-
 
         return WaitAction(self.entity).perform()

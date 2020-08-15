@@ -149,6 +149,9 @@ class Actor(Entity):
         self.fighter = fighter
         self.fighter.entity = self
 
+        # abstract into a hostile class? PC can't have a target lock i think?
+        self.target_lock = None
+
     # this is an odd way to do this. probably fine, but this was the side-effecting problem with setting AI to null.
     @property
     def is_alive(self) -> bool:
