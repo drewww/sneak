@@ -68,33 +68,8 @@ class ActionWithDirection(Action):
 
     def perform(self) -> None:
         # for any action with a direction, set the facing to the direction.
-        self.entity.facing = self.get_direction()
-
-    def get_direction(self):
-        # this angle is in radians
-        # 0 = up, 1=right
-        angle = math.atan2(self.dy, self.dx)
-
-        # i want to map this down to 0/1/-1 on two axes.
-        # or maybe I'm just weak and do the map version.
-        # these = are a little shaky and I'm not sure they're mutually exclusive
-        if angle <= math.pi/8 and angle > -math.pi/8:
-            return Facing.E
-        elif angle <= 3*math.pi/8 and angle > math.pi/8:
-            return Facing.SE
-        elif angle <= 5*math.pi/8 and angle > 3*math.pi/8:
-            return Facing.S
-        elif angle <= 7*math.pi/8 and angle > 5*math.pi/8:
-            return Facing.SW
-        elif angle >= 7*math.pi/8 or angle < -7*math.pi/8:
-            return Facing.W
-        elif angle >= -3*math.pi/8 and angle < -math.pi/8:
-            return Facing.NE
-        elif angle >= -5*math.pi/8 and angle < -3*math.pi/8:
-            return Facing.N
-        elif angle >= -7*math.pi/8 and angle < -5*math.pi/8:
-            return Facing.NW
-
+        # TODO strip this out. switch to failing an action with direction if it doesn't match facing.
+        self.entity.facing = Facing.get_direction(self.dx, self.dy)
 
 
 

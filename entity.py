@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import copy
+import copy, math
 from typing import Optional, Tuple, Type, TypeVar, TYPE_CHECKING
 
 from render_order import RenderOrder
@@ -26,10 +26,40 @@ class Facing(Enum):
     @classmethod
     def get_pos(cls, f: Facing):
         map = {Facing.NW: (-1, -1), Facing.N: (0, -1), Facing.NE: (1, -1), Facing.E: (1, 0), Facing.SE: (1, 1), Facing.S: (0, 1), Facing.SW: (-1,1), Facing.W: (-1, 0)}
-
-        print(f'facing: {f} = {map[f]}')
-
         return map[f]
+
+    @classmethod
+    def get_direction(cls,
+        x1:int, y1:int,
+        x2:int = 0, y2:int = 0):
+
+        dx = x2-x1
+        dy = y2-y1
+
+        # this angle is in radians
+        # 0 = up, 1=right
+        angle = math.atan2(dy, dx)
+
+        # i want to map this down to 0/1/-1 on two axes.
+        # or maybe I'm just weak and do the map version.
+        # these = are a little shaky and I'm not sure they're mutually exclusive
+        if angle <= math.pi/8 and angle > -math.pi/8:
+            return Facing.E
+        elif angle <= 3*math.pi/8 and angle > math.pi/8:
+            return Facing.SE
+        elif angle <= 5*math.pi/8 and angle > 3*math.pi/8:
+            return Facing.S
+        elif angle <= 7*math.pi/8 and angle > 5*math.pi/8:
+            return Facing.SW
+        elif angle >= 7*math.pi/8 or angle < -7*math.pi/8:
+            return Facing.W
+        elif angle >= -3*math.pi/8 and angle < -math.pi/8:
+            return Facing.NE
+        elif angle >= -5*math.pi/8 and angle < -3*math.pi/8:
+            return Facing.N
+        elif angle >= -7*math.pi/8 and angle < -5*math.pi/8:
+            return Facing.NW
+
 
 
 class Entity:

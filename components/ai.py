@@ -8,6 +8,8 @@ import tcod
 from actions import Action, MeleeAction, MovementAction, WaitAction
 from components.base_component import BaseComponent
 
+from entity import Facing
+
 if TYPE_CHECKING:
     from entity import Actor
 
@@ -81,7 +83,11 @@ class HostileEnemy(BaseAI):
                     print(f'too close to attack!')
                     # return MeleeAction(self.entity, dx, dy).perform()
                 if distance > 1:
-                    print('enter ranged attack here')
+                    # oh actually, this is easy! get angle,
+                    # check if it collapses to facing. done.
+                    firing_direction = Facing.get_direction(self.entity.x, self.entity.y, target.x, target.y)
+                    print(f'firing_facing: {firing_direction} + my_facing: {self.entity.facing}')
+
             else:
                 self.path = self.get_path_to(target.x, target.y)
 
