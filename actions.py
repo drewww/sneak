@@ -146,10 +146,12 @@ class TargetLockAction(Action):
         self.entity.facing = self.facing
         self.entity.target_lock = self.target
 
-
+# this is practically only done by players. going to set facing auto on these.
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         super().perform()
+
+        self.entity.facing = Facing.get_direction(self.entity.x, self.entity.y, self.dx+self.entity.x, self.dy+self.entity.y)
 
         if self.target_actor:
             return MeleeAction(self.entity, self.dx, self.dy).perform()
