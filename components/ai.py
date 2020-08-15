@@ -5,7 +5,7 @@ from typing import List, Tuple, TYPE_CHECKING
 import numpy as np  # type: ignore
 import tcod
 
-from actions import Action, MeleeAction, MovementAction, WaitAction
+from actions import Action, MeleeAction, MovementAction, WaitAction, RotateAction, ShootAction
 from components.base_component import BaseComponent
 
 from entity import Facing
@@ -88,6 +88,13 @@ class HostileEnemy(BaseAI):
                     firing_direction = Facing.get_direction(self.entity.x, self.entity.y, target.x, target.y)
                     print(f'firing_facing: {firing_direction} + my_facing: {self.entity.facing}')
 
+                    if(firing_direction == self.entity.facing):
+                        return ShootAction(self.entity, target.x-self.entity.x,
+                            target.y - self.entity.y).perform()
+                    else:
+                        # lets just assume we fully rotate to target immediately.
+                        print('not facing target, prepare to rotate')
+                        return RotateAction(self.entity, firing_direction).perform()
             else:
                 self.path = self.get_path_to(target.x, target.y)
 

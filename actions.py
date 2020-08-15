@@ -69,7 +69,8 @@ class ActionWithDirection(Action):
     def perform(self) -> None:
         # for any action with a direction, set the facing to the direction.
         # TODO strip this out. switch to failing an action with direction if it doesn't match facing.
-        self.entity.facing = Facing.get_direction(self.dx, self.dy)
+        # self.entity.facing = Facing.get_direction(self.dx, self.dy)
+        pass
 
 
 
@@ -100,6 +101,19 @@ class MeleeAction(ActionWithDirection):
                 f"{attack_desc} but does no damage.", attack_color
             )
 
+class ShootAction(ActionWithDirection):
+    def perform(self) -> None:
+        super().perform()
+
+        target = self.target_actor
+        if not target:
+            return # No entity to attack.
+
+        damage = 10
+
+        self.engine.message_log.add_message(f'{self.entity.name.capitalize()} attacks {target.name} for {damage} hit points', color.white)
+
+        target.fighter.hp -= damage
 
 class MovementAction(ActionWithDirection):
     def perform(self) -> None:
@@ -115,6 +129,15 @@ class MovementAction(ActionWithDirection):
             return  # Destination is blocked by an entity.
 
         self.entity.move(self.dx, self.dy)
+
+class RotateAction(Action):
+    def __init__(self, entity: Actor, facing: Facing):
+        super().__init__(entity)
+        self.facing = facing
+
+    def perform(self) -> None:
+        print(f'updating {self.entity} facing to {self.facing}')
+        self.entity.facing = self.facing
 
 
 class BumpAction(ActionWithDirection):

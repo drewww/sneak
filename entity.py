@@ -94,6 +94,9 @@ class Entity:
             self.gamemap = gamemap
             gamemap.entities.add(self)
 
+    def __str__(self):
+        return f'({self.name}: ({self.x}, {self.y}):{self.facing})'
+
     def spawn(self: T, gamemap: GameMap, x: int, y: int) -> T:
         """Spawn a copy of this instance at the given location."""
         clone = copy.deepcopy(self)
