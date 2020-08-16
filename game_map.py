@@ -30,6 +30,8 @@ class GameMap:
             (width, height), fill_value=False, order="F"
         )  # Tiles the player has seen before
 
+        self.vision_mode = False
+
     @property
     def actors(self) -> Iterator[Actor]:
         """Iterate over this maps living actors."""
@@ -71,9 +73,16 @@ class GameMap:
         If it isn't, but it's in the "explored" array, then draw it with the "dark" colors.
         Otherwise, the default is "SHROUD".
         """
+
+        # swap color modes depending on mode
+        if self.vision_mode:
+            world_colors = [self.tiles["light_vision"], self.tiles["dark_vision"]]
+        else:
+            world_colors = [self.tiles["light"], self.tiles["dark"]]
+
         console.tiles_rgb[0 : self.width, 0 : self.height] = np.select(
             condlist=[self.visible, self.explored],
-            choicelist=[self.tiles["light"], self.tiles["dark"]],
+            choicelist=world_colors,
             default=tile_types.SHROUD,
         )
 

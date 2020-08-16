@@ -98,12 +98,21 @@ class MainGameEventHandler(EventHandler):
 
         elif key == tcod.event.K_ESCAPE:
             action = EscapeAction(player)
+        elif key == tcod.event.K_TAB:
+            # change renderer mode to vision
+            self.engine.game_map.vision_mode = True
         elif key == tcod.event.K_v:
             self.engine.event_handler = HistoryViewer(self.engine)
 
         # No valid key was pressed
         return action
 
+    def ev_keyup(self, event: tcod.event.KeyUp) -> Optional[Action]:
+        key = event.sym
+
+        if key == tcod.event.K_TAB:
+            # change renderer mode to vision
+            self.engine.game_map.vision_mode = False
 
 class GameOverEventHandler(EventHandler):
     def handle_events(self, context: tcod.context.Context) -> None:
