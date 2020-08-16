@@ -98,41 +98,42 @@ class GameMap:
                 x=entity.x, y=entity.y, string=entity.char, fg=entity.color
             )
 
-            # now print their facing
-            # not sure where to do this but need to map facing to dx/dy.
+            if self.vision_mode:
 
-            LASER_SIGHT_DISTANCE = 4
+                # in case I want to bring back facing
+                # console.print(x=entity.x+fx, y=entity.y+fy, string='*', fg=entity.color)
 
-            # if we're target locked, don't draw facing, draw direct connection
-            if not entity.is_player and entity.target_lock == None:
-                (fx, fy) = Facing.get_pos(entity.facing)
+                # now print their facing
+                # not sure where to do this but need to map facing to dx/dy.
+                LASER_SIGHT_DISTANCE = 4
+                # if we're target locked, don't draw facing, draw direct connection
+                # if not entity.is_player and entity.target_lock == None:
+                #     (fx, fy) = Facing.get_pos(entity.facing)
+                #
+                #     # get delta to destination
+                #     (dx, dy) = (LASER_SIGHT_DISTANCE*fx, LASER_SIGHT_DISTANCE*fy)
+                #
+                #     cells = tcod.los.bresenham((entity.x, entity.y),
+                #         (entity.x + dx, entity.y + dy))
+                #
+                #     cells = np.delete(cells, 0, 0)
+                #
+                #     discount = 0.5
+                #     for cell in cells:
+                #         tile = self.tiles[cell[0]][cell[1]]
+                #
+                #         if tile['walkable'] or tile['transparent']:
+                #             console.print(cell[0], cell[1], string=' ', bg=(int(255*discount), 0, 0))
+                #             discount -= 0.5/LASER_SIGHT_DISTANCE
+                
+                if not entity.is_player and entity.target_lock != None:
+                    cells = tcod.los.bresenham((entity.x, entity.y),
+                        (entity.target_lock.x, entity.target_lock.y))
 
-                # get delta to destination
-                (dx, dy) = (LASER_SIGHT_DISTANCE*fx, LASER_SIGHT_DISTANCE*fy)
+                    cells = np.delete(cells, 0, 0)
 
-                cells = tcod.los.bresenham((entity.x, entity.y),
-                    (entity.x + dx, entity.y + dy))
+                    for cell in cells:
+                        tile = self.tiles[cell[0]][cell[1]]
 
-                cells = np.delete(cells, 0, 0)
-
-                discount = 0.5
-                for cell in cells:
-                    tile = self.tiles[cell[0]][cell[1]]
-
-                    if tile['walkable'] or tile['transparent']:
-                        console.print(cell[0], cell[1], string=' ', bg=(int(255*discount), 0, 0))
-                        discount -= 0.5/LASER_SIGHT_DISTANCE
-            elif not entity.is_player and entity.target_lock != None:
-                cells = tcod.los.bresenham((entity.x, entity.y),
-                    (entity.target_lock.x, entity.target_lock.y))
-
-                cells = np.delete(cells, 0, 0)
-
-                for cell in cells:
-                    tile = self.tiles[cell[0]][cell[1]]
-
-                    if tile['walkable'] or tile['transparent']:
-                        console.print(cell[0], cell[1], string=' ', bg=(int(255), 0, 0))
-
-
-            # console.print(x=entity.x+fx, y=entity.y+fy, string='*', fg=entity.color)
+                        if tile['walkable'] or tile['transparent']:
+                            console.print(cell[0], cell[1], string=' ', bg=(int(255), 0, 0))
