@@ -16,9 +16,9 @@ def main() -> None:
     map_width = 80
     map_height = 43
 
-    room_max_size = 10
-    room_min_size = 6
-    max_rooms = 30
+    room_max_size = 30
+    room_min_size = 15
+    max_rooms = 10
 
     max_monsters_per_room = 2
 
@@ -27,6 +27,7 @@ def main() -> None:
     )
 
     player = copy.deepcopy(entity_factories.player)
+    player.is_player = True
 
     engine = Engine(player=player)
 

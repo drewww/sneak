@@ -146,6 +146,8 @@ class Actor(Entity):
 
         self.ai: Optional[BaseAI] = ai_cls(self)
 
+        self.is_player = False
+
         self.fighter = fighter
         self.fighter.entity = self
 

@@ -77,8 +77,6 @@ class HostileEnemy(BaseAI):
             self.engine.game_map.tiles["transparent"], (self.entity.x, self.entity.y))
 
         target_is_visible = visibility[target.x, target.y]
-        print(f'{self} -> ({target.x}, {target.y}) = {target_is_visible}')
-
 
         # reasons to drop a lock:
         #   moving
@@ -90,7 +88,6 @@ class HostileEnemy(BaseAI):
                 self.entity.y, target.x, target.y)
 
             if distance <= 1:
-                print(f'too close, dropping lock!')
                 self.entity.target_lock = None
                 self.engine.message_log.add_message(
                     f"You got in close, enemy lost their lock!", color.white
