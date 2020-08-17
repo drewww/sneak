@@ -126,6 +126,8 @@ class GameMap:
                 #             console.print(cell[0], cell[1], string=' ', bg=(int(255*discount), 0, 0))
                 #             discount -= 0.5/LASER_SIGHT_DISTANCE
 
+                print(f'is_player: {entity.is_player}')
+
                 if not entity.is_player and entity.target_lock != None:
                     cells = tcod.los.bresenham((entity.x, entity.y),
                         (entity.target_lock.x, entity.target_lock.y))
@@ -144,11 +146,11 @@ class GameMap:
                     # this is an ndarray with T/F in it. we need to AND this
                     # with a matching size array that has just a white with
                     # alpha channel set. then overlay the whole thing.
-                    vision = np.full((self.width, self.height, 3), (255, 255, 255))
+                    vision = np.full((self.width, self.height, 3), (255, 0, 0))
 
-                    vision[cells] = [0, 0, 0]
+                    vision[np.invert(cells)] = [0, 0, 0]
 
-                    vision_console = Console(self.height, self.width)
+                    vision_console = Console(self.width, self.height, order="F")
                     vision_console.bg_alpha=0.3
 
                     vision_console.bg[:] = vision

@@ -133,7 +133,6 @@ class RotateAction(Action):
         self.facing = facing
 
     def perform(self) -> None:
-        print(f'updating {self.entity} facing to {self.facing}')
         self.entity.facing = self.facing
 
 class TargetLockAction(Action):

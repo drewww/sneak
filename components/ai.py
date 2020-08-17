@@ -97,7 +97,6 @@ class HostileEnemy(BaseAI):
                     f"You got in close, enemy lost their lock!", color.white
                 )
             elif distance > 1 and distance <= 5:
-                print("locking")
                 # target lock now implies facing. if you move across a facing
                 # boundary it doesn't unlock.
                 if self.entity.target_lock==target:
