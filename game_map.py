@@ -141,14 +141,18 @@ class GameMap:
                             console.print(cell[0], cell[1], string=' ', bg=(255, 0, 0))
                 elif not entity.is_player and entity.target_lock == None:
                     # if they don't have a lock, paint their entire vision
+                    # only compute this for tiles the player can see
                     cells = entity.get_visibility(self.tiles["transparent"])
+
 
                     # this is an ndarray with T/F in it. we need to AND this
                     # with a matching size array that has just a white with
                     # alpha channel set. then overlay the whole thing.
                     vision = np.full((self.width, self.height, 3), (255, 0, 0))
 
+                    # I'm not honestly sure why I have to invert this. Need to see if fix is in get_visibility.
                     vision[np.invert(cells)] = [0, 0, 0]
+                    vision[np.invert(self.visible[:])] = [0,0,0] 
 
                     vision_console = Console(self.width, self.height, order="F")
                     vision_console.bg_alpha=0.3

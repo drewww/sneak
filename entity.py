@@ -157,7 +157,7 @@ class Actor(Entity):
 
     def get_visibility(self, tiles):
         return tcod.map.compute_fov(
-                tiles, (self.x, self.y))
+                tiles, (self.x, self.y), algorithm=1)
 
     # this is an odd way to do this. probably fine, but this was the side-effecting problem with setting AI to null.
     @property
