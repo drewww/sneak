@@ -73,8 +73,12 @@ class HostileEnemy(BaseAI):
         # if yes, check if we're facing. if we are, fire. otherwise, rotate.
         # if self.engine.game_map.visible[self.entity.x, self.entity.y]:
 
-        visibility = tcod.map.compute_fov(
-            self.engine.game_map.tiles["transparent"], (self.entity.x, self.entity.y))
+
+        # visibility = tcod.map.compute_fov(
+        #     self.engine.game_map.tiles["transparent"], (self.entity.x, self.entity.y))
+
+        visibility = self.entity.get_visibility(
+            self.engine.game_map.tiles["transparent"])
 
         target_is_visible = visibility[target.x, target.y]
 
@@ -93,7 +97,7 @@ class HostileEnemy(BaseAI):
                     f"You got in close, enemy lost their lock!", color.white
                 )
             elif distance > 1 and distance <= 5:
-
+                print("locking")
                 # target lock now implies facing. if you move across a facing
                 # boundary it doesn't unlock.
                 if self.entity.target_lock==target:

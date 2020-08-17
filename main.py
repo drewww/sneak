@@ -40,10 +40,11 @@ def main() -> None:
         max_monsters_per_room=max_monsters_per_room,
         engine=engine,
     )
+
     engine.update_fov()
 
     engine.message_log.add_message(
-        "Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text
+        "Begin the run.", color.welcome_text
     )
 
     with tcod.context.new_terminal(

@@ -4,6 +4,7 @@ import copy, math
 from typing import Optional, Tuple, Type, TypeVar, TYPE_CHECKING
 
 from render_order import RenderOrder
+import tcod
 
 if TYPE_CHECKING:
     from components.ai import BaseAI
@@ -153,6 +154,10 @@ class Actor(Entity):
 
         # abstract into a hostile class? PC can't have a target lock i think?
         self.target_lock = None
+
+    def get_visibility(self, tiles):
+        return tcod.map.compute_fov(
+                tiles, (self.x, self.y))
 
     # this is an odd way to do this. probably fine, but this was the side-effecting problem with setting AI to null.
     @property

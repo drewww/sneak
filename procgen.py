@@ -125,4 +125,9 @@ def generate_dungeon(
         # Finally, append the new room to the list.
         rooms.append(new_room)
 
+    # don't allow more than one enemy for now
+    # this is disgusting but seems to work because sets have an implicit order
+    # and I can trust it at this point in execution???
+    dungeon.entities = set(list(dungeon.entities)[0:2])
+
     return dungeon

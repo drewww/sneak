@@ -125,7 +125,7 @@ class GameMap:
                 #         if tile['walkable'] or tile['transparent']:
                 #             console.print(cell[0], cell[1], string=' ', bg=(int(255*discount), 0, 0))
                 #             discount -= 0.5/LASER_SIGHT_DISTANCE
-                
+
                 if not entity.is_player and entity.target_lock != None:
                     cells = tcod.los.bresenham((entity.x, entity.y),
                         (entity.target_lock.x, entity.target_lock.y))
@@ -136,4 +136,22 @@ class GameMap:
                         tile = self.tiles[cell[0]][cell[1]]
 
                         if tile['walkable'] or tile['transparent']:
-                            console.print(cell[0], cell[1], string=' ', bg=(int(255), 0, 0))
+                            console.print(cell[0], cell[1], string=' ', bg=(255, 0, 0))
+                elif not entity.is_player and entity.target_lock == None:
+                    # if they don't have a lock, paint their entire vision
+                    cells = entity.get_visibility(self.tiles["transparent"])
+
+                    # this is an ndarray with T/F in it. we need to AND this
+                    # with a matching size array that has just a white with
+                    # alpha channel set. then overlay the whole thing.
+                    vision = np.full((self.width, self.height, 3), (255, 255, 255))
+
+                    vision[cells] = [0, 0, 0]
+
+                    vision_console = Console(self.height, self.width)
+                    vision_console.bg_alpha=0.3
+
+                    vision_console.bg[:] = vision
+
+                    # no params since we're fully overlaying the whole screen
+                    vision_console.blit(console, bg_alpha=0.2)
