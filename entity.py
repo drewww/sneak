@@ -5,6 +5,7 @@ from typing import Optional, Tuple, Type, TypeVar, TYPE_CHECKING
 
 from render_order import RenderOrder
 import tcod
+import numpy as np
 
 if TYPE_CHECKING:
     from components.ai import BaseAI
@@ -28,6 +29,11 @@ class Facing(Enum):
     def get_pos(cls, f: Facing):
         map = {Facing.NW: (-1, -1), Facing.N: (0, -1), Facing.NE: (1, -1), Facing.E: (1, 0), Facing.SE: (1, 1), Facing.S: (0, 1), Facing.SW: (-1,1), Facing.W: (-1, 0)}
         return map[f]
+
+    @classmethod
+    def get_angle(cls, f: Facing):
+        pos = cls.get_pos(f)
+        return math.atan2(pos[0], pos[1])
 
     @classmethod
     def get_direction(cls,
@@ -156,8 +162,55 @@ class Actor(Entity):
         self.target_lock = None
 
     def get_visibility(self, tiles):
-        return tcod.map.compute_fov(
-                tiles, (self.x, self.y), algorithm=1)
+        visibility = tcod.map.compute_fov(
+            tiles, (self.x, self.y), algorithm=1, radius=12)
+
+        # now, whack it with a facing mask.
+        # my meh idea for this is raytracing.
+
+        # I think there's a one command way to do this but i'm lazy
+        mask = np.full(tiles.shape, False)
+        facing_angle = Facing.get_angle(self.facing)
+
+        # print('--------------------------')
+        for angle in np.linspace(-math.pi, math.pi, 256):
+
+            # this seems okay in unit tests but who knows.
+            angle_distance = min(abs(angle-facing_angle),
+                                 2*math.pi - (angle-facing_angle))
+            # print(f'angle: {angle} facing_angle: {facing_angle} = {angle_distance}')
+
+            if(angle_distance < math.pi/4):
+                # print('in vision cone')
+                range = 12
+            elif(angle_distance < math.pi/2):
+                range = 4
+            else:
+                range = 2
+
+            # print(f'range: {range}')
+            target = (np.clip(self.x + int(np.sin(angle)*range), 0, tiles.shape[0]-1),
+                      np.clip(self.y + int(np.cos(angle)*range), 0, tiles.shape[1]-1))
+
+            # mask[target[0]][target[1]] = True
+
+            los = tcod.los.bresenham((self.x, self.y), target)
+
+            # print(f'({self.x}, {self.y}) -> {target}: {los}')
+            # there has GOT to be a better way to do this but
+            # i'll be damned if I can figure it out. so we're
+            # iterating like a baby.
+            for coords in los:
+                mask[coords[0]][coords[1]] = True
+
+        # mask is True if coordinate is visible based on the sweep.
+        # now we want to set anything that's NOT true in the mask to False
+        # in the visibility view. (basically, we're ANDing them together.)
+
+        mask = np.invert(mask)
+        visibility[mask] = False
+        return visibility
+        # return mask
 
     # this is an odd way to do this. probably fine, but this was the side-effecting problem with setting AI to null.
     @property
