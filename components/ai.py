@@ -11,6 +11,8 @@ from components.base_component import BaseComponent
 from entity import Facing
 from enum import Enum, auto
 
+from random import random
+
 import color
 
 if TYPE_CHECKING:
@@ -81,13 +83,28 @@ class HostileEnemy(BaseAI):
             player_visible = self.is_visible(self.engine.player.x,
                 self.engine.player.y)
 
+            # print(f'Patrolling to waypoint {self.waypoint} now at {(self.entity.x, self.entity.y)}')
+
             if player_visible:
                 self.mode=HostileMode.HUNT
             else:
-                self.waypoint = (self.engine.player.x, self.engine.player.y)
-                self.path = self.get_path_to(self.waypoint[0], self.waypoint[1])
-                # if self.waypoint == None:
+                if self.waypoint == None:
                     # we need to set a new waypoint.
+                    self.path = []
+                    tx = 0
+                    ty = 0
+
+                    while len(self.path)==0:
+                        tx = int(random()*self.engine.game_map.width)
+                        ty = int(random()*self.engine.game_map.height)
+
+                        self.path = self.get_path_to(tx, ty)
+
+                    self.waypoint = (tx, ty)
+
+                if (self.waypoint[0] == self.entity.x) and (self.waypoint[1] == self.entity.y):
+                    self.waypoint = None
+
         elif self.mode==HostileMode.HUNT:
             return self.perform_hunt()
         else:
