@@ -99,6 +99,7 @@ class HostileEnemy(BaseAI):
                         ty = int(random()*self.engine.game_map.height)
 
                         self.path = self.get_path_to(tx, ty)
+                        print(f'setting path: {self.path}')
 
                     self.waypoint = (tx, ty)
 
@@ -112,16 +113,20 @@ class HostileEnemy(BaseAI):
             print('Unhandled mode.')
 
         if self.path:
-            dest_x, dest_y = self.path.pop(0)
+            dest_x, dest_y = self.path[0]
 
             moving_direction = Facing.get_direction(self.entity.x,
                 self.entity.y, dest_x, dest_y)
+            # print(f'checking facing: {(dest_x, dest_y)} direction {moving_direction} current facing {self.entity.facing}')
 
             if(moving_direction == self.entity.facing):
+                # now pop it.
+                self.path.pop(0)
                 return MovementAction(
                     self.entity, dest_x - self.entity.x, dest_y - self.entity.y,
                 ).perform()
             else:
+                # print(f'returning rotate action to {moving_direction}')
                 return RotateAction(self.entity, moving_direction).perform()
 
         return WaitAction(self.entity).perform()

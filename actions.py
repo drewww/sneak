@@ -70,6 +70,7 @@ class ActionWithDirection(Action):
         # for any action with a direction, set the facing to the direction.
         # TODO strip this out. switch to failing an action with direction if it doesn't match facing.
         # self.entity.facing = Facing.get_direction(self.dx, self.dy)
+        print(self)
         pass
 
 class MeleeAction(ActionWithDirection):
@@ -113,6 +114,9 @@ class ShootAction(ActionWithDirection):
         target.fighter.hp -= damage
 
 class MovementAction(ActionWithDirection):
+    def __str__(self):
+        return f'<actions.MovementAction {self.entity} {(self.entity.x, self.entity.y)}->{(self.dx, self.dy)}'
+
     def perform(self) -> None:
         super().perform()
 
