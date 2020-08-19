@@ -83,10 +83,9 @@ class HostileEnemy(BaseAI):
             player_visible = self.is_visible(self.engine.player.x,
                 self.engine.player.y)
 
-            # print(f'Patrolling to waypoint {self.waypoint} now at {(self.entity.x, self.entity.y)}')
+            print(f'Patrolling to waypoint {self.waypoint} now at {(self.entity.x, self.entity.y)}')
 
             if player_visible:
-                print('saw player!')
                 self.mode=HostileMode.HUNT
             else:
                 if self.waypoint == None:
@@ -104,6 +103,7 @@ class HostileEnemy(BaseAI):
                     self.waypoint = (tx, ty)
 
                 if (self.waypoint[0] == self.entity.x) and (self.waypoint[1] == self.entity.y):
+                    print("Arrived at destination.")
                     self.waypoint = None
 
         elif self.mode==HostileMode.HUNT:
