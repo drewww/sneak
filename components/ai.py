@@ -86,6 +86,7 @@ class HostileEnemy(BaseAI):
             print(f'Patrolling to waypoint {self.waypoint} now at {(self.entity.x, self.entity.y)}')
 
             if player_visible:
+                print("SAW PLAYER, HUNTING")
                 self.mode=HostileMode.HUNT
             else:
                 if self.waypoint == None:
