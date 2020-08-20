@@ -31,6 +31,7 @@ class GameMap:
         )  # Tiles the player has seen before
 
         self.vision_mode = False
+        self.vision_row=0
 
     @property
     def actors(self) -> Iterator[Actor]:
@@ -75,16 +76,35 @@ class GameMap:
         """
 
         # swap color modes depending on mode
-        if self.vision_mode:
-            world_colors = [self.tiles["light_vision"], self.tiles["dark_vision"]]
-        else:
-            world_colors = [self.tiles["light"], self.tiles["dark"]]
+        # this is an animation trick. each time we render, move down a row.
+        if self.vision_mode and self.vision_row <= self.height:
+            self.vision_row += 1
+        elif self.vision_row > 0:
+            self.vision_row -= 1
 
-        console.tiles_rgb[0 : self.width, 0 : self.height] = np.select(
+        print(f'vision_row={self.vision_row}')
+
+        # then we do rendering in two passes. 0 to current row, then current_row
+        # to rest. so in vision mode, it's 0:0 and we dont' render with vision
+        # colors.
+        if self.vision_row > 0:
+            tiles = np.select(
+                condlist=[self.visible, self.explored],
+                choicelist=[self.tiles["light_vision"], self.tiles["dark_vision"]],
+                default=tile_types.SHROUD,
+            )
+
+            console.tiles_rgb[0 : self.width, 0 : self.vision_row] = tiles[0:self.width,0:self.vision_row]
+
+        tiles = np.select(
             condlist=[self.visible, self.explored],
-            choicelist=world_colors,
+            choicelist=[self.tiles["light"], self.tiles["dark"]],
             default=tile_types.SHROUD,
         )
+
+        # print(f'tiles.shape={tiles.shape}  tiles.shape[][]={tiles[:][self.vision_row:self.height].shape} console.shape={console.tiles_rgb[0 : self.width, self.vision_row : self.height].shape} from {(self.width, self.height)} + row {self.vision_row}')
+
+        console.tiles_rgb[0 : self.width, self.vision_row : self.height] = tiles[0:self.width,self.vision_row:self.height]
 
         entities_sorted_for_rendering = sorted(
             self.entities, key=lambda x: x.render_order.value
@@ -99,7 +119,6 @@ class GameMap:
             )
 
             if self.vision_mode:
-
                 # in case I want to bring back facing
                 # console.print(x=entity.x+fx, y=entity.y+fy, string='*', fg=entity.color)
 
