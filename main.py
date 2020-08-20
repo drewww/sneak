@@ -10,11 +10,11 @@ from procgen import generate_dungeon
 
 
 def main() -> None:
-    screen_width = 80
-    screen_height = 50
+    screen_width = 160
+    screen_height = 100
 
-    map_width = 80
-    map_height = 43
+    map_width = 160
+    map_height = 86
 
     room_max_size = 30
     room_min_size = 15
@@ -51,7 +51,7 @@ def main() -> None:
         screen_width,
         screen_height,
         tileset=tileset,
-        title="Yet Another Roguelike Tutorial",
+        title="sneak",
         vsync=True,
     ) as context:
         root_console = tcod.Console(screen_width, screen_height, order="F")

@@ -126,6 +126,8 @@ def generate_dungeon(
             player.place(*new_room.center, dungeon)
         else:  # All rooms after the first.
             # Dig out a tunnel between this room and the previous one.
+            # in this new generation model this is sort of a hack -- it creates
+            # doors but does nothing else. 
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
 
