@@ -33,6 +33,10 @@ class RectangularRoom:
         """Return the inner area of this room as a 2D array index."""
         return slice(self.x1 + 1, self.x2), slice(self.y1 + 1, self.y2)
 
+    @property
+    def outer(self) -> Tuple[slice, slice]:
+        return slice(self.x1, self.x2+1), slice(self.y1, self.y2+1)
+
     def intersects(self, other: RectangularRoom) -> bool:
         """Return True if this room overlaps with another RectangularRoom."""
         return (
@@ -94,6 +98,10 @@ def generate_dungeon(
 
     rooms: List[RectangularRoom] = []
 
+    dungeon.tiles[:] = tile_types.floor
+
+    #
+
     for r in range(max_rooms):
         room_width = random.randint(room_min_size, room_max_size)
         room_height = random.randint(room_min_size, room_max_size)
@@ -110,6 +118,7 @@ def generate_dungeon(
         # If there are no intersections then the room is valid.
 
         # Dig out this rooms inner area.
+        dungeon.tiles[new_room.outer] = tile_types.wall
         dungeon.tiles[new_room.inner] = tile_types.floor
 
         if len(rooms) == 0:
@@ -120,7 +129,7 @@ def generate_dungeon(
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
 
-        place_entities(new_room, dungeon, max_monsters_per_room)
+        # place_entities(new_room, dungeon, max_monsters_per_room)
 
         # Finally, append the new room to the list.
         rooms.append(new_room)
@@ -128,6 +137,6 @@ def generate_dungeon(
     # don't allow more than one enemy for now
     # this is disgusting but seems to work because sets have an implicit order
     # and I can trust it at this point in execution???
-    dungeon.entities = set(list(dungeon.entities)[0:2])
+    # dungeon.entities = set(list(dungeon.entities)[0:2])
 
     return dungeon
