@@ -78,9 +78,12 @@ class GameMap:
         # swap color modes depending on mode
         # this is an animation trick. each time we render, move down a row.
         if self.vision_mode and self.vision_row <= self.height:
-            self.vision_row += 1
+            self.vision_row += 4
         elif self.vision_row > 0:
-            self.vision_row -= 1
+            self.vision_row -= 4
+
+        self.vision_row = min(self.vision_row, self.height)
+        self.vision_row = max(self.vision_row, 0)
 
         print(f'vision_row={self.vision_row}')
 

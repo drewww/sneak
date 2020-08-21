@@ -59,8 +59,10 @@ def main() -> None:
             root_console.clear()
             engine.event_handler.on_render(console=root_console)
             context.present(root_console)
-
+            engine.render(root_console)
+            
             engine.event_handler.handle_events(context)
+
 
 
 if __name__ == "__main__":

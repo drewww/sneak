@@ -69,7 +69,8 @@ class EventHandler(tcod.event.EventDispatch[Action]):
 
 class MainGameEventHandler(EventHandler):
     def handle_events(self, context: tcod.context.Context) -> None:
-        for event in tcod.event.wait():
+
+        for event in tcod.event.get():
             context.convert_event(event)
 
             action = self.dispatch(event)
