@@ -82,10 +82,9 @@ class GameMap:
         elif self.vision_row > 0:
             self.vision_row -= 4
 
+        # clamp it
         self.vision_row = min(self.vision_row, self.height)
         self.vision_row = max(self.vision_row, 0)
-
-        print(f'vision_row={self.vision_row}')
 
         # then we do rendering in two passes. 0 to current row, then current_row
         # to rest. so in vision mode, it's 0:0 and we dont' render with vision

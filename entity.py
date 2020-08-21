@@ -163,7 +163,7 @@ class Actor(Entity):
 
     def get_visibility(self, tiles):
         visibility = tcod.map.compute_fov(
-            tiles, (self.x, self.y), algorithm=1, radius=12)
+            tiles, (self.x, self.y), algorithm=1, radius=24)
 
         # now, whack it with a facing mask.
         # my meh idea for this is raytracing.
@@ -173,7 +173,7 @@ class Actor(Entity):
         facing_angle = Facing.get_angle(self.facing)
 
         # print('--------------------------')
-        for angle in np.linspace(-math.pi, math.pi, 256):
+        for angle in np.linspace(-math.pi, math.pi, 50):
 
             # this seems okay in unit tests but who knows.
             angle_distance = min(abs(angle-facing_angle),
@@ -182,26 +182,24 @@ class Actor(Entity):
 
             if(angle_distance < math.pi/4):
                 # print('in vision cone')
-                range = 12
+                r = 24
             elif(angle_distance < math.pi/2):
-                range = 4
+                r = 6
             else:
-                range = 2
+                r = 2
 
-            # print(f'range: {range}')
-            target = (np.clip(self.x + int(np.sin(angle)*range), 0, tiles.shape[0]-1),
-                      np.clip(self.y + int(np.cos(angle)*range), 0, tiles.shape[1]-1))
+            for length in range(1, r, 5):
+                target = (np.clip(self.x + int(np.sin(angle)*length), 0, tiles.shape[0]-1),
+                      np.clip(self.y + int(np.cos(angle)*length), 0, tiles.shape[1]-1))
 
-            # mask[target[0]][target[1]] = True
+                los = tcod.los.bresenham((self.x, self.y), target)
 
-            los = tcod.los.bresenham((self.x, self.y), target)
-
-            # print(f'({self.x}, {self.y}) -> {target}: {los}')
-            # there has GOT to be a better way to do this but
-            # i'll be damned if I can figure it out. so we're
-            # iterating like a baby.
-            for coords in los:
-                mask[coords[0]][coords[1]] = True
+                # print(f'({self.x}, {self.y}) -> {target}: {los}')
+                # there has GOT to be a better way to do this but
+                # i'll be damned if I can figure it out. so we're
+                # iterating like a baby.
+                for coords in los:
+                    mask[coords[0]][coords[1]] = True
 
         # mask is True if coordinate is visible based on the sweep.
         # now we want to set anything that's NOT true in the mask to False

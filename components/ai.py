@@ -100,7 +100,7 @@ class HostileEnemy(BaseAI):
                         ty = int(random()*self.engine.game_map.height)
 
                         self.path = self.get_path_to(tx, ty)
-                        print(f'setting path: {self.path}')
+                        # print(f'setting path: {self.path}')
 
                     self.waypoint = (tx, ty)
 

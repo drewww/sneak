@@ -20,7 +20,7 @@ def main() -> None:
     room_min_size = 15
     max_rooms = 10
 
-    max_monsters_per_room = 2
+    max_monsters_per_room = 0
 
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
@@ -60,7 +60,7 @@ def main() -> None:
             engine.event_handler.on_render(console=root_console)
             context.present(root_console)
             engine.render(root_console)
-            
+
             engine.event_handler.handle_events(context)
 
 
