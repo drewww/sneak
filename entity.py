@@ -190,7 +190,7 @@ class Actor(Entity):
                 # could do this fancy with pathfinder/djikstra but fuck it, pythagoras had this worked out fine.
                 distance = int(math.sqrt(math.pow(self.x-x, 2) + math.pow(self.y-y, 2)))
 
-                angle = math.atan2(self.x-x, self.y-y)
+                angle = math.atan2(self.x-x, self.y-y) + math.pi
                 angle_distance = min(abs(angle-facing_angle),
                                          2*math.pi - (angle-facing_angle))
 
