@@ -172,41 +172,79 @@ class Actor(Entity):
         mask = np.full(tiles.shape, False)
         facing_angle = Facing.get_angle(self.facing)
 
+
+        # loop through every tile in visibility.
+        # for tile in visibility[visibility==True]:
+            # print(tile)
+
+        # I feel like there's a clever list comprehension here but...
+        # ths is expensive. we only want to consider True values here
+        # but I don't know how to back out from a tile to its coordinates.
+        # this makes make think that ultimately tiles need unique ids not just be naked booleans?
+        for x in range(0, visibility.shape[0]):
+            for y in range(0, visibility.shape[1]):
+
+                visible = visibility[x][y]
+                if not visible:
+                    continue
+
+                # first, compute the distance to the entity.
+                # then compute the angle.
+                # then set true/false based on the acceptable range for that angle.
+
+                # could do this fancy with pathfinder/djikstra but fuck it, pythagoras had this worked out fine.
+                distance = int(math.sqrt(math.pow(self.x-x, 2) + math.pow(self.y-y, 2)))
+
+                angle = math.atan2(self.x-x, self.y-y)
+                angle_distance = min(abs(angle-facing_angle),
+                                         2*math.pi - (angle-facing_angle))
+
+                if(angle_distance < math.pi/4):
+                    r = 24
+                elif(angle_distance < math.pi/2):
+                    r = 6
+                else:
+                    r = 2
+
+                # flip it to False if it's out of range for the angle.
+                if distance > r:
+                    visibility[x][y] = False
+
         # print('--------------------------')
-        for angle in np.linspace(-math.pi, math.pi, 50):
-
-            # this seems okay in unit tests but who knows.
-            angle_distance = min(abs(angle-facing_angle),
-                                 2*math.pi - (angle-facing_angle))
-            # print(f'angle: {angle} facing_angle: {facing_angle} = {angle_distance}')
-
-            if(angle_distance < math.pi/4):
-                # print('in vision cone')
-                r = 24
-            elif(angle_distance < math.pi/2):
-                r = 6
-            else:
-                r = 2
-
-            for length in range(1, r, 5):
-                target = (np.clip(self.x + int(np.sin(angle)*length), 0, tiles.shape[0]-1),
-                      np.clip(self.y + int(np.cos(angle)*length), 0, tiles.shape[1]-1))
-
-                los = tcod.los.bresenham((self.x, self.y), target)
-
-                # print(f'({self.x}, {self.y}) -> {target}: {los}')
-                # there has GOT to be a better way to do this but
-                # i'll be damned if I can figure it out. so we're
-                # iterating like a baby.
-                for coords in los:
-                    mask[coords[0]][coords[1]] = True
+        # for angle in np.linspace(-math.pi, math.pi, 50):
+        #
+        #     # this seems okay in unit tests but who knows.
+        #     angle_distance = min(abs(angle-facing_angle),
+        #                          2*math.pi - (angle-facing_angle))
+        #     # print(f'angle: {angle} facing_angle: {facing_angle} = {angle_distance}')
+        #
+        #     if(angle_distance < math.pi/4):
+        #         # print('in vision cone')
+        #         r = 24
+        #     elif(angle_distance < math.pi/2):
+        #         r = 6
+        #     else:
+        #         r = 2
+        #
+        #     for length in range(1, r, 5):
+        #         target = (np.clip(self.x + int(np.sin(angle)*length), 0, tiles.shape[0]-1),
+        #               np.clip(self.y + int(np.cos(angle)*length), 0, tiles.shape[1]-1))
+        #
+        #         los = tcod.los.bresenham((self.x, self.y), target)
+        #
+        #         # print(f'({self.x}, {self.y}) -> {target}: {los}')
+        #         # there has GOT to be a better way to do this but
+        #         # i'll be damned if I can figure it out. so we're
+        #         # iterating like a baby.
+        #         for coords in los:
+        #             mask[coords[0]][coords[1]] = True
 
         # mask is True if coordinate is visible based on the sweep.
         # now we want to set anything that's NOT true in the mask to False
         # in the visibility view. (basically, we're ANDing them together.)
 
-        mask = np.invert(mask)
-        visibility[mask] = False
+        # mask = np.invert(mask)
+        # visibility[mask] = False
         return visibility
         # return mask
 

@@ -20,7 +20,7 @@ def main() -> None:
     room_min_size = 15
     max_rooms = 10
 
-    max_monsters_per_room = 0
+    max_monsters_per_room = 1
 
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
