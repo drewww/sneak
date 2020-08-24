@@ -1,9 +1,15 @@
+from __future__ import annotations
+
 import logging
 from typing import Optional
 
 import tcod
 
 from actions import Action
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from engine import Engine
 
 logger = logging.getLogger("sneak")
 
@@ -45,6 +51,8 @@ WAIT_KEYS = {
 
 
 class EventHandler(tcod.event.EventDispatch[Action]):
+    def __init__(self, engine: Engine):
+        self.engine = engine
 
     def handle_event(self, context: tcod.context.Context, ev: tcod.event.Event) -> None:
         # no idea what this does
@@ -69,6 +77,8 @@ class EventHandler(tcod.event.EventDispatch[Action]):
         if key == tcod.event.K_TAB:
             logger.info('toggle vision mode')
             pass
+        elif key == tcod.event.K_a:
+            self.engine.add_random_frame()
         elif key == tcod.event.K_ESCAPE:
             raise SystemExit()
 

@@ -5,9 +5,10 @@ import logging
 import tcod
 
 import color
-from engine import Engine
+import engine
 from engineold import EngineOld
 import entity_factories
+from geometry import Point2D
 from procgen import generate_dungeon
 
 
@@ -29,7 +30,7 @@ def main() -> None:
 
     logger.info("Starting up.")
 
-    e = Engine(screen_width, screen_height, "sneak")
+    e = engine.Engine(screen_width, screen_height, "sneak")
 
 
 if __name__ == "__main__":
