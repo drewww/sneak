@@ -5,14 +5,11 @@ from typing import Iterator, List, Tuple, TYPE_CHECKING
 
 import tcod
 
-import entity_factories
-from game_map import GameMap
+from game_map_old import GameMap
 import tile_types
 
-
 if TYPE_CHECKING:
-    from engineold import EngineOld
-
+    from engine import Engine
 
 class RectangularRoom:
     def __init__(self, x: int, y: int, width: int, height: int):
@@ -83,24 +80,22 @@ def tunnel_between(
         yield x, y
 
 
-def generate_dungeon(
+def generate_map(
     max_rooms: int,
     room_min_size: int,
     room_max_size: int,
     map_width: int,
     map_height: int,
     max_monsters_per_room: int,
-    engine: EngineOld,
+    engine: Engine,
 ) -> GameMap:
     """Generate a new dungeon map."""
-    player = engine.player
-    dungeon = GameMap(engine, map_width, map_height, entities=[player])
+    # player = engine.player
+    dungeon = GameMap(engine, map_width, map_height, entities=[])
 
     rooms: List[RectangularRoom] = []
 
     dungeon.tiles[:] = tile_types.floor
-
-    #
 
     for r in range(max_rooms):
         room_width = random.randint(room_min_size, room_max_size)
@@ -123,7 +118,8 @@ def generate_dungeon(
 
         if len(rooms) == 0:
             # The first room, where the player starts.
-            player.place(*new_room.center, dungeon)
+            # player.place(*new_room.center, dungeon)
+            pass
         else:  # All rooms after the first.
             # Dig out a tunnel between this room and the previous one.
             # in this new generation model this is sort of a hack -- it creates
@@ -131,14 +127,9 @@ def generate_dungeon(
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
 
-        place_entities(new_room, dungeon, max_monsters_per_room)
+        # place_entities(new_room, dungeon, max_monsters_per_room)
 
         # Finally, append the new room to the list.
         rooms.append(new_room)
-
-    # don't allow more than one enemy for now
-    # this is disgusting but seems to work because sets have an implicit order
-    # and I can trust it at this point in execution???
-    # dungeon.entities = set(list(dungeon.entities)[0:2])
 
     return dungeon

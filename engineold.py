@@ -11,7 +11,7 @@ from render_functions import render_bar, render_names_at_mouse_location
 
 if TYPE_CHECKING:
     from entity import Actor
-    from game_map import GameMap
+    from game_map_old import GameMap
     from input_handlers_old import EventHandler
 
 

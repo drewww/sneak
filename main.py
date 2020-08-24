@@ -1,18 +1,7 @@
 #!/usr/bin/env python3
-import copy
 import logging
 
-import tcod
-from tcod import Console
-
-import color
 import engine
-from engineold import EngineOld
-import entity_factories
-from frame import Frame
-from geometry import Point2D
-from input_handler import EventHandler
-from procgen import generate_dungeon
 
 
 def main() -> None:

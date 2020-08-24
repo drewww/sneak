@@ -12,7 +12,6 @@ from geometry import Point2D
 
 logger = logging.getLogger("sneak")
 
-
 class Frame(tcod.Console):
     def __init__(self, width: int, height: int, order: str = 'F', buffer: Optional[numpy.ndarray] = None,
                  root_point: Point2D = Point2D(0, 0)):

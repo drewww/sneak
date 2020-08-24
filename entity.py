@@ -10,7 +10,7 @@ import numpy as np
 if TYPE_CHECKING:
     from components.ai import BaseAI
     from components.fighter import Fighter
-    from game_map import GameMap
+    from game_map_old import GameMap
 
 T = TypeVar("T", bound="Entity")
 

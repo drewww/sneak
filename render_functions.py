@@ -7,7 +7,7 @@ import color
 if TYPE_CHECKING:
     from tcod import Console
     from engineold import EngineOld
-    from game_map import GameMap
+    from game_map_old import GameMap
 
 
 def get_names_at_location(x: int, y: int, game_map: GameMap) -> str:

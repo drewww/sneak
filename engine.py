@@ -5,6 +5,7 @@ import tcod
 from frame import Frame, TestFrame, FPSFrame
 from geometry import Point2D
 from input_handler import EventHandler
+from procgen import generate_map
 
 logger = logging.getLogger("sneak")
 
@@ -33,7 +34,9 @@ class Engine:
             self.root_console.add_child(FPSFrame())
 
             self.event_handler = EventHandler(self)
+            self.map = generate_map(10, 5,20,self.root_console.width, self.root_console.height, 0, self)
 
+            logger.info(f'constructed map: {self.map}')
             while True:
                 # logger.debug("game loop start")
                 self.root_console.clear()
