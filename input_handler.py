@@ -60,7 +60,7 @@ class EventHandler(tcod.event.EventDispatch[Action]):
         self.dispatch(ev)
 
     def ev_mousemotion(self, event: tcod.event.MouseMotion) -> None:
-        logger.debug(event)
+        # logger.debug(event)
 
         # TODO add this back in when we've updated game_map.
         # if self.engine.game_map.in_bounds(event.tile.x, event.tile.y):

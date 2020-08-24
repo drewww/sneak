@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from typing import Optional
 
@@ -11,7 +13,7 @@ logger = logging.getLogger("sneak")
 
 class Frame(tcod.Console):
     def __init__(self, width: int, height: int, order: str = 'F', buffer: Optional[numpy.ndarray] = None,
-                 root_point: Point2D = Point2D(0,0)):
+                 root_point: Point2D = Point2D(0, 0)):
         super(Frame, self).__init__(height, width, order, buffer)
 
         # store a list of all sub-frames.
@@ -21,10 +23,38 @@ class Frame(tcod.Console):
         # parent frame.
         self.root_point = root_point
 
-    def render(self, parent):
+    def render(self, parent: Frame = None):
 
         # call all your children to render, then blit the resulting console onto your parent
         for child in self.children:
             child.render(self)
 
-        self.blit(parent, self.root_point.x, self.root_point.y)
+        if parent:
+            self.blit(parent, self.root_point.x, self.root_point.y)
+        else:
+            logging.debug("Rendering root, no parent.")
+
+    def add_child(self, frame):
+        self.children.append(frame)
+
+    def remove_child(self, frame):
+        self.children.remove(frame)
+
+    def __str__(self):
+        return f'<Frame width={self.width} height={self.height} root_point={self.root_point}>'
+
+    # todo will need z index ordering control
+
+
+class TestFrame(Frame):
+
+    # default to 1,1 in size
+    def __init__(self, width=1, height=1, order='F', buffer=None, root_point=Point2D(0, 0)):
+        super(TestFrame, self).__init__(width, height, order, buffer, root_point)
+
+    def render(self, parent):
+        logging.debug(f'rendering TestFrame: {self}')
+        self.print(0, 0, "@", (255, 255, 255))
+
+        # do the super call last, since that's where the render-to-parent call happens.
+        super().render(parent)

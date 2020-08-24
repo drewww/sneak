@@ -2,6 +2,8 @@ import logging
 
 import tcod
 
+from frame import Frame, TestFrame
+from geometry import Point2D
 from input_handler import EventHandler
 
 logger = logging.getLogger("sneak")
@@ -16,6 +18,10 @@ class Engine:
 
         logger.debug(f'Loaded tileset: {tileset}')
 
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+
+        # TODO understand more deeply why this is a thing
         with tcod.context.new_terminal(
                 screen_width,
                 screen_height,
@@ -23,22 +29,33 @@ class Engine:
                 title=title,
                 vsync=True,
         ) as context:
-            self.root_console = tcod.Console(screen_width, screen_height, order="F")
-            self.event_handler = EventHandler()
+            self.root_console = Frame(screen_width, screen_height, order="F")
+            self.event_handler = EventHandler(self)
 
             while True:
                 # logger.debug("game loop start")
                 self.root_console.clear()
+
+                self.handle_events(context)
+                self.render()
+
                 context.present(self.root_console)
 
-                self.render()
-                self.handle_events(context)
 
     def render(self):
-        pass
+        self.root_console.render()
 
     def handle_events(self, context):
         for ev in tcod.event.get():
-            logger.debug(f'handling ev: {ev}')
+            # logger.debug(f'handling ev: {ev}')
             self.event_handler.handle_event(context, ev)
 
+    def add_random_frame(self):
+        new_frame = TestFrame(root_point=Point2D.rand(max_point=Point2D(self.screen_width, self.screen_height)))
+
+        logging.info(f"Adding random frame: {new_frame}")
+
+        self.root_console.add_child(new_frame)
+
+
+# TODO abstract out to SneakEngine and keep Engine clean.
