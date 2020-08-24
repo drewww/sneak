@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import time
 from typing import Optional
 
 import numpy
@@ -47,7 +48,6 @@ class Frame(tcod.Console):
 
 
 class TestFrame(Frame):
-
     # default to 1,1 in size
     def __init__(self, width=1, height=1, order='F', buffer=None, root_point=Point2D(0, 0)):
         super(TestFrame, self).__init__(width, height, order, buffer, root_point)
@@ -58,4 +58,19 @@ class TestFrame(Frame):
         self.print(0, 0, "@", fg=(255-bg[0], 255-bg[1], 255-bg[2]), bg=bg)
 
         # do the super call last, since that's where the render-to-parent call happens.
+        super().render(parent)
+
+class FPSFrame(Frame):
+    def __init__(self, width=7, height=1, order='F', buffer=None, root_point=Point2D(0, 0)):
+        super().__init__(width, height, order, buffer, root_point)
+
+        self.last_render_time = time.time()
+
+    def render(self, parent):
+
+        fps = int(1 / (time.time() - self.last_render_time))
+        self.last_render_time = time.time()
+
+        self.print(0, 0, str(fps), color.white)
+        self.print(4, 0, "fps", color.white)
         super().render(parent)

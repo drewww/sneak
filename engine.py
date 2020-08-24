@@ -2,7 +2,7 @@ import logging
 
 import tcod
 
-from frame import Frame, TestFrame
+from frame import Frame, TestFrame, FPSFrame
 from geometry import Point2D
 from input_handler import EventHandler
 
@@ -30,6 +30,8 @@ class Engine:
                 vsync=True,
         ) as context:
             self.root_console = Frame(screen_width, screen_height, order="F")
+            self.root_console.add_child(FPSFrame())
+
             self.event_handler = EventHandler(self)
 
             while True:
