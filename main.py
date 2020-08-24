@@ -3,18 +3,21 @@ import copy
 import logging
 
 import tcod
+from tcod import Console
 
 import color
 import engine
 from engineold import EngineOld
 import entity_factories
+from frame import Frame
 from geometry import Point2D
+from input_handler import EventHandler
 from procgen import generate_dungeon
 
 
 def main() -> None:
-    screen_width = 160
-    screen_height = 100
+    screen_width = 80
+    screen_height = 50
 
     logger = logging.getLogger("sneak")
     logger.setLevel(logging.DEBUG)

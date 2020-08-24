@@ -14,7 +14,7 @@ logger = logging.getLogger("sneak")
 class Frame(tcod.Console):
     def __init__(self, width: int, height: int, order: str = 'F', buffer: Optional[numpy.ndarray] = None,
                  root_point: Point2D = Point2D(0, 0)):
-        super(Frame, self).__init__(height, width, order, buffer)
+        super().__init__(width, height, order, buffer)
 
         # store a list of all sub-frames.
         self.children = []
@@ -24,7 +24,6 @@ class Frame(tcod.Console):
         self.root_point = root_point
 
     def render(self, parent: Frame = None):
-
         # call all your children to render, then blit the resulting console onto your parent
         for child in self.children:
             child.render(self)
@@ -32,7 +31,7 @@ class Frame(tcod.Console):
         if parent:
             self.blit(parent, self.root_point.x, self.root_point.y)
         else:
-            logging.debug("Rendering root, no parent.")
+            logger.debug("Rendering root, no parent.")
 
     def add_child(self, frame):
         self.children.append(frame)
@@ -53,7 +52,6 @@ class TestFrame(Frame):
         super(TestFrame, self).__init__(width, height, order, buffer, root_point)
 
     def render(self, parent):
-        logging.debug(f'rendering TestFrame: {self}')
         self.print(0, 0, "@", (255, 255, 255))
 
         # do the super call last, since that's where the render-to-parent call happens.
