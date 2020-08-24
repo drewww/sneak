@@ -53,15 +53,18 @@ class EventHandler(tcod.event.EventDispatch[Action]):
 
     def ev_mousemotion(self, event: tcod.event.MouseMotion) -> None:
         logger.debug(event)
-        pass
+
+        # TODO add this back in when we've updated game_map.
         # if self.engine.game_map.in_bounds(event.tile.x, event.tile.y):
         #     self.engine.mouse_location = event.tile.x, event.tile.y
+
+        pass
 
     def ev_quit(self, event: tcod.event.Quit) -> Optional[Action]:
         raise SystemExit()
 
     def ev_keydown(self, event: "tcod.event.KeyDown") -> None:
-        key=event.sym
+        key = event.sym
 
         if key == tcod.event.K_TAB:
             logger.info('toggle vision mode')
