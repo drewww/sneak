@@ -1,8 +1,12 @@
+import logging
 from typing import Optional
 
 import tcod
 
 from actions import Action
+
+logger = logging.getLogger("sneak")
+
 
 class EventHandler(tcod.event.EventDispatch[Action]):
 
@@ -12,6 +16,7 @@ class EventHandler(tcod.event.EventDispatch[Action]):
             self.dispatch(event)
 
     def ev_mousemotion(self, event: tcod.event.MouseMotion) -> None:
+        logger.debug(event)
         pass
         # if self.engine.game_map.in_bounds(event.tile.x, event.tile.y):
         #     self.engine.mouse_location = event.tile.x, event.tile.y
@@ -20,4 +25,5 @@ class EventHandler(tcod.event.EventDispatch[Action]):
         raise SystemExit()
 
     def on_render(self, console: tcod.Console) -> None:
-        self.engine.render(console)
+        pass
+        # self.engine.render(console)
