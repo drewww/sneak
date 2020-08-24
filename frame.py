@@ -6,6 +6,7 @@ from typing import Optional
 import numpy
 import tcod
 
+import color
 from geometry import Point2D
 
 logger = logging.getLogger("sneak")
@@ -52,7 +53,9 @@ class TestFrame(Frame):
         super(TestFrame, self).__init__(width, height, order, buffer, root_point)
 
     def render(self, parent):
-        self.print(0, 0, "@", (255, 255, 255))
+        bg = color.random_color()
+
+        self.print(0, 0, "@", fg=(255-bg[0], 255-bg[1], 255-bg[2]), bg=bg)
 
         # do the super call last, since that's where the render-to-parent call happens.
         super().render(parent)

@@ -1,3 +1,5 @@
+import random
+
 white = (0xFF, 0xFF, 0xFF)
 black = (0x0, 0x0, 0x0)
 
@@ -12,3 +14,9 @@ welcome_text = (0x20, 0xA0, 0xFF)
 bar_text = white
 bar_filled = (0x0, 0x60, 0x0)
 bar_empty = (0x40, 0x10, 0x10)
+
+
+def random_color():
+    return int(random.random() * 255), int(random.random() * 255), int(random.random() * 255)
+
+#TODO full color class - invert, complement, etc.
