@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import color
 from components.base_component import BaseComponent
-from input_handlers import GameOverEventHandler
+from input_handlers_old import GameOverEventHandler
 from render_order import RenderOrder
 
 if TYPE_CHECKING:

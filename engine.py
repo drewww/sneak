@@ -1,5 +1,7 @@
 import tcod
 
+from input_handler import EventHandler
+
 
 class Engine:
     def __init__(self, screen_width:int, screen_height:int, title:str):
@@ -16,6 +18,8 @@ class Engine:
                 vsync=True,
         ) as context:
             self.root_console = tcod.Console(screen_width, screen_height, order="F")
+            self.event_handler = EventHandler()
+
             while True:
                 self.root_console.clear()
                 context.present(self.root_console)
@@ -23,6 +27,7 @@ class Engine:
                 self.render()
                 self.handle_events()
 
+                self.event_handler.handle_events(context)
                 # self.event_handler.on_render(console=root_console)
                 # self.event_handler.handle_events(context)
 
