@@ -6,7 +6,7 @@ import color
 
 if TYPE_CHECKING:
     from tcod import Console
-    from engine import Engine
+    from engineold import EngineOld
     from game_map import GameMap
 
 
@@ -39,7 +39,7 @@ def render_bar(
 
 
 def render_names_at_mouse_location(
-    console: Console, x: int, y: int, engine: Engine
+    console: Console, x: int, y: int, engine: EngineOld
 ) -> None:
     mouse_x, mouse_y = engine.mouse_location
 

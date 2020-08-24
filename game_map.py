@@ -10,13 +10,13 @@ from entity import Actor, Facing
 import tile_types
 
 if TYPE_CHECKING:
-    from engine import Engine
+    from engineold import EngineOld
     from entity import Entity
 
 
 class GameMap:
     def __init__(
-        self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
+        self, engine: EngineOld, width: int, height: int, entities: Iterable[Entity] = ()
     ):
         self.engine = engine
         self.width, self.height = width, height

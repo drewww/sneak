@@ -7,7 +7,7 @@ import tcod
 from actions import Action, BumpAction, EscapeAction, WaitAction
 
 if TYPE_CHECKING:
-    from engine import Engine
+    from engineold import EngineOld
 
 
 MOVE_KEYS = {
@@ -48,7 +48,7 @@ WAIT_KEYS = {
 
 
 class EventHandler(tcod.event.EventDispatch[Action]):
-    def __init__(self, engine: Engine):
+    def __init__(self, engine: EngineOld):
         self.engine = engine
 
     def handle_events(self, context: tcod.context.Context) -> None:
@@ -145,7 +145,7 @@ CURSOR_Y_KEYS = {
 class HistoryViewer(EventHandler):
     """Print the history on a larger window which can be navigated."""
 
-    def __init__(self, engine: Engine):
+    def __init__(self, engine: EngineOld):
         super().__init__(engine)
         self.log_length = len(engine.message_log.messages)
         self.cursor = self.log_length - 1

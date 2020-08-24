@@ -1,54 +1,33 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
-
-from tcod.console import Console
-from tcod.map import compute_fov
-
-from input_handlers import MainGameEventHandler
-from message_log import MessageLog
-from render_functions import render_bar, render_names_at_mouse_location
-
-if TYPE_CHECKING:
-    from entity import Actor
-    from game_map import GameMap
-    from input_handlers import EventHandler
+import tcod
 
 
 class Engine:
-    game_map: GameMap
+    def __init__(self, screen_width:int, screen_height:int, title:str):
 
-    def __init__(self, player: Actor):
-        self.event_handler: EventHandler = MainGameEventHandler(self)
-        self.message_log = MessageLog()
-        self.mouse_location = (0, 0)
-        self.player = player
-
-    def handle_enemy_turns(self) -> None:
-        for entity in set(self.game_map.actors) - {self.player}:
-            if entity.ai:
-                entity.ai.perform()
-
-    def update_fov(self) -> None:
-        """Recompute the visible area based on the players point of view."""
-        self.game_map.visible[:] = compute_fov(
-            self.game_map.tiles["transparent"],
-            (self.player.x, self.player.y),
-            radius=0,
-        )
-        # If a tile is "visible" it should be added to "explored".
-        self.game_map.explored |= self.game_map.visible
-
-    def render(self, console: Console) -> None:
-        self.game_map.render(console)
-
-        self.message_log.render(console=console, x=21, y=90, width=40, height=5)
-
-        render_bar(
-            console=console,
-            current_value=self.player.fighter.hp,
-            maximum_value=self.player.fighter.max_hp,
-            total_width=20,
+        tileset = tcod.tileset.load_tilesheet(
+            "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
         )
 
-        render_names_at_mouse_location(console=console, x=21, y=44, engine=self)
+        with tcod.context.new_terminal(
+                screen_width,
+                screen_height,
+                tileset=tileset,
+                title=title,
+                vsync=True,
+        ) as context:
+            self.root_console = tcod.Console(screen_width, screen_height, order="F")
+            while True:
+                self.root_console.clear()
+                context.present(self.root_console)
+
+                self.render()
+                self.handle_events()
+
+                # self.event_handler.on_render(console=root_console)
+                # self.event_handler.handle_events(context)
+
+    def render(self):
+        pass
+
+    def handle_events(self):
+        pass

@@ -8,7 +8,7 @@ import math
 from entity import Facing
 
 if TYPE_CHECKING:
-    from engine import Engine
+    from engineold import EngineOld
     from entity import Actor, Entity
 
 
@@ -18,7 +18,7 @@ class Action:
         self.entity = entity
 
     @property
-    def engine(self) -> Engine:
+    def engine(self) -> EngineOld:
         """Return the engine this action belongs to."""
         return self.entity.gamemap.engine
 

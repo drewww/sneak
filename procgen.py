@@ -11,7 +11,7 @@ import tile_types
 
 
 if TYPE_CHECKING:
-    from engine import Engine
+    from engineold import EngineOld
 
 
 class RectangularRoom:
@@ -90,7 +90,7 @@ def generate_dungeon(
     map_width: int,
     map_height: int,
     max_monsters_per_room: int,
-    engine: Engine,
+    engine: EngineOld,
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
