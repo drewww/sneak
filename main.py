@@ -21,6 +21,7 @@ def main() -> None:
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
 
+    # TODO figure out how to make the time less verbose. don't need date.
     formatter = logging.Formatter('[%(levelname)s]\t(%(asctime)s)\t%(message)s')
     ch.setFormatter(formatter)
 

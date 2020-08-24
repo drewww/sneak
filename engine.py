@@ -27,19 +27,18 @@ class Engine:
             self.event_handler = EventHandler()
 
             while True:
-                logger.debug("game loop start")
+                # logger.debug("game loop start")
                 self.root_console.clear()
                 context.present(self.root_console)
 
                 self.render()
-                self.handle_events()
-
-                self.event_handler.handle_events(context)
-                # self.event_handler.on_render(console=root_console)
-                # self.event_handler.handle_events(context)
+                self.handle_events(context)
 
     def render(self):
         pass
 
-    def handle_events(self):
-        pass
+    def handle_events(self, context):
+        for ev in tcod.event.get():
+            logger.debug(f'handling ev: {ev}')
+            self.event_handler.handle_event(context, ev)
+
