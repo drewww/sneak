@@ -1,36 +1,43 @@
 from __future__ import annotations
 
+import logging
 from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 
 import numpy as np  # type: ignore
 from tcod.console import Console
 
 import tile_types
-from engine import Engine
 from entity import Actor
+from frame import Frame
+
+logger = logging.getLogger("sneak")
+
 
 if TYPE_CHECKING:
     from entity import Entity
+    from engine import Engine
 
 
-class GameMap:
+class GameMap (Frame):
     def __init__(
         self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
     ):
+        super().__init__(width, height)
+
         self.engine = engine
-        self.width, self.height = width, height
+
         self.entities = set(entities)
-        self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
+        self.map_tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
 
         self.visible = np.full(
-            (width, height), fill_value=False, order="F"
+            (width, height), fill_value=True, order="F"
         )  # Tiles the player can currently see
         self.explored = np.full(
-            (width, height), fill_value=False, order="F"
+            (width, height), fill_value=True, order="F"
         )  # Tiles the player has seen before
 
-        self.vision_mode = False
-        self.vision_row=0
+        # self.vision_mode = False
+        # self.vision_row=0
 
     @property
     def actors(self) -> Iterator[Actor]:
@@ -65,7 +72,7 @@ class GameMap:
         """Return True if x and y are inside of the bounds of this map."""
         return 0 <= x < self.width and 0 <= y < self.height
 
-    def render(self, console: Console) -> None:
+    def render(self, parent: Frame) -> None:
         """
         Renders the map.
 
@@ -74,10 +81,17 @@ class GameMap:
         Otherwise, the default is "SHROUD".
         """
 
-        tiles = np.select(
+        self.map_tiles = np.select(
             condlist=[self.visible, self.explored],
-            choicelist=[self.tiles["light"], self.tiles["dark"]],
+            choicelist=[self.map_tiles["light"], self.map_tiles["dark"]],
             default=tile_types.SHROUD,
         )
 
-        console.tiles_rgb[0 : self.width, self.vision_row : self.height] = tiles[0:self.width,self.vision_row:self.height]
+
+        # self.tiles_rgb[0 : self.width, self.vision_row : self.height] = self.map_tiles[0:self.width,self.vision_row:self.height]
+        self.tiles_rgb[0 : self.width, 0 : self.height] = self.map_tiles[0:self.width,0:self.height]
+
+        logger.info("Render map.")
+
+        super().render(parent)
+

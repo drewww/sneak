@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import logging
 import random
 from typing import Iterator, List, Tuple, TYPE_CHECKING
 
 import tcod
 
-from game_map_old import GameMap
+from game_map import GameMap
 import tile_types
+
+logger = logging.getLogger("sneak")
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -44,20 +47,20 @@ class RectangularRoom:
         )
 
 
-def place_entities(
-    room: RectangularRoom, dungeon: GameMap, maximum_monsters: int,
-) -> None:
-    number_of_monsters = random.randint(0, maximum_monsters)
-
-    for i in range(number_of_monsters):
-        x = random.randint(room.x1 + 1, room.x2 - 1)
-        y = random.randint(room.y1 + 1, room.y2 - 1)
-
-        if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
-            if random.random() < 0.8:
-                entity_factories.orc.spawn(dungeon, x, y)
-            else:
-                entity_factories.troll.spawn(dungeon, x, y)
+# def place_entities(
+#     room: RectangularRoom, dungeon: GameMap, maximum_monsters: int,
+# ) -> None:
+#     number_of_monsters = random.randint(0, maximum_monsters)
+#
+#     for i in range(number_of_monsters):
+#         x = random.randint(room.x1 + 1, room.x2 - 1)
+#         y = random.randint(room.y1 + 1, room.y2 - 1)
+#
+#         if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
+#             if random.random() < 0.8:
+#                 entity_factories.orc.spawn(dungeon, x, y)
+#             else:
+#                 entity_factories.troll.spawn(dungeon, x, y)
 
 
 def tunnel_between(
@@ -95,7 +98,7 @@ def generate_map(
 
     rooms: List[RectangularRoom] = []
 
-    dungeon.tiles[:] = tile_types.floor
+    dungeon.map_tiles[:] = tile_types.floor
 
     for r in range(max_rooms):
         room_width = random.randint(room_min_size, room_max_size)
@@ -112,9 +115,10 @@ def generate_map(
             continue  # This room intersects, so go to the next attempt.
         # If there are no intersections then the room is valid.
 
+        logger.info(f"Generated valid room: {new_room}")
         # Dig out this rooms inner area.
-        dungeon.tiles[new_room.outer] = tile_types.wall
-        dungeon.tiles[new_room.inner] = tile_types.floor
+        dungeon.map_tiles[new_room.outer] = tile_types.wall
+        dungeon.map_tiles[new_room.inner] = tile_types.floor
 
         if len(rooms) == 0:
             # The first room, where the player starts.
@@ -125,11 +129,12 @@ def generate_map(
             # in this new generation model this is sort of a hack -- it creates
             # doors but does nothing else.
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
-                dungeon.tiles[x, y] = tile_types.floor
+                dungeon.map_tiles[x, y] = tile_types.floor
 
         # place_entities(new_room, dungeon, max_monsters_per_room)
 
         # Finally, append the new room to the list.
         rooms.append(new_room)
 
+    logger.info(f"Completed map: {dungeon}")
     return dungeon

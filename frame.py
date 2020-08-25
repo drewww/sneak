@@ -24,13 +24,15 @@ class Frame(tcod.Console):
         # parent frame.
         self.root_point = root_point
 
+        self.alpha = 0.5
+
     def render(self, parent: Frame = None):
         # call all your children to render, then blit the resulting console onto your parent
         for child in self.children:
             child.render(self)
 
         if parent:
-            self.blit(parent, self.root_point.x, self.root_point.y)
+            self.blit(parent, self.root_point.x, self.root_point.y, fg_alpha = 1.0, bg_alpha = self.alpha)
         else:
             logger.debug("Rendering root, no parent.")
 
