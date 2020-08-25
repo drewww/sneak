@@ -24,15 +24,22 @@ class Frame(tcod.Console):
         # parent frame.
         self.root_point = root_point
 
-        self.alpha = 0.5
+        self.bg_alpha = 0.5
+        self.fg_alpha = 1.0
+        self.z_index = 0
 
     def render(self, parent: Frame = None):
         # call all your children to render, then blit the resulting console onto your parent
-        for child in self.children:
+
+        frames_sorted_for_rendering = sorted(
+            self.children, key=lambda x: x.z_index
+        )
+
+        for child in frames_sorted_for_rendering:
             child.render(self)
 
         if parent:
-            self.blit(parent, self.root_point.x, self.root_point.y, fg_alpha = 1.0, bg_alpha = self.alpha)
+            self.blit(parent, self.root_point.x, self.root_point.y, fg_alpha = self.fg_alpha, bg_alpha = self.bg_alpha)
         else:
             logger.debug("Rendering root, no parent.")
 
@@ -43,9 +50,7 @@ class Frame(tcod.Console):
         self.children.remove(frame)
 
     def __str__(self):
-        return f'<Frame width={self.width} height={self.height} root_point={self.root_point}>'
-
-    # todo will need z index ordering control
+        return f'<Frame width={self.width} height={self.height} root_point={self.root_point} num_children={len(self.children)}>'
 
 
 class TestFrame(Frame):
@@ -66,6 +71,7 @@ class FPSFrame(Frame):
         super().__init__(width, height, order, buffer, root_point)
 
         self.last_render_time = time.time()
+        self.bg_alpha = 0.0
 
     def render(self, parent):
 

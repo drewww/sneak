@@ -81,10 +81,6 @@ class GameMap (Frame):
         Otherwise, the default is "SHROUD".
         """
 
-        # entities_sorted_for_rendering = sorted(
-        #     self.entities, key=lambda x: x.render_order.value
-        # )
-
         tiles_to_update = np.select(
             condlist=[self.visible, self.explored],
             choicelist=[self.map_tiles["light"], self.map_tiles["dark"]],
